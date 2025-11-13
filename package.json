@@ -1,0 +1,37 @@
+{
+  "name": "bibliotheque-api",
+  "version": "1.0.0",
+  "description": "API REST pour la gestion d'une bibliothèque numérique avec authentification JWT",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "studio": "DATABASE_URL=\"postgresql://postgres:password@localhost:5432/bibliotheque\" npx prisma studio",
+    "seed": "DATABASE_URL=\"postgresql://postgres:password@localhost:5432/bibliotheque\" node prisma/seed.js"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
+  "keywords": ["api", "rest", "jwt", "prisma", "postgresql", "express"],
+  "author": "Enzo",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^6.19.0",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "prisma": "^6.19.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/express": "^5.0.5",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.10.1",
+    "nodemon": "^3.1.11"
+  }
+}

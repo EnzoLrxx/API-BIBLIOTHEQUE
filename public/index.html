@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Bibliothèque - Interface de test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .header .links {
+            margin-top: 15px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .header .links a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 16px;
+            border: 1px solid #667eea;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .header .links a:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #555;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            flex: 1;
+            background: #667eea;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102,126,234,0.4);
+        }
+
+        button.secondary {
+            background: #6c757d;
+        }
+
+        button.secondary:hover {
+            background: #5a6268;
+        }
+
+        .status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            display: none;
+        }
+
+        .status.show {
+            display: block;
+        }
+
+        .status.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .token-display {
+            background: #e7f3ff;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 12px;
+            word-break: break-all;
+            display: none;
+        }
+
+        .token-display.show {
+            display: block;
+        }
+
+        .token-display strong {
+            color: #667eea;
+        }
+
+        .list {
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .list-item {
+            background: #f8f9fa;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            border-left: 3px solid #667eea;
+        }
+
+        .list-item strong {
+            color: #667eea;
+            font-size: 14px;
+        }
+
+        .list-item small {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #667eea;
+            color: white;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>API Bibliothèque - Interface de test</h1>
+            <p>Testez facilement toutes les fonctionnalités de l'API REST</p>
+            <div class="links">
+                <a href="/api-docs" target="_blank">Documentation Swagger</a>
+                <a href="http://localhost:3001/api/v1" target="_blank">API Base URL</a>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>Authentification <span class="badge">STEP 1</span></h2>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" value="admin@bibliotheque.com" placeholder="admin@bibliotheque.com">
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" id="loginPassword" value="admin123" placeholder="admin123">
+                </div>
+                <div class="btn-group">
+                    <button onclick="login()">Se connecter</button>
+                </div>
+                <div class="token-display" id="tokenDisplay"></div>
+                <div class="status" id="loginStatus"></div>
+            </div>
+
+            <div class="card">
+                <h2>Auteurs <span class="badge">STEP 2</span></h2>
+                <div class="form-group">
+                    <label>Nom de l'auteur</label>
+                    <input type="text" id="authorName" placeholder="Ex: J.K. Rowling">
+                </div>
+                <div class="form-group">
+                    <label>Biographie</label>
+                    <textarea id="authorBio" placeholder="Ex: Auteure britannique célèbre pour Harry Potter"></textarea>
+                </div>
+                <div class="btn-group">
+                    <button onclick="addAuthor()">Créer</button>
+                    <button class="secondary" onclick="getAuthors()">Actualiser</button>
+                </div>
+                <div class="status" id="authorStatus"></div>
+                <div class="list" id="authorsList"></div>
+            </div>
+
+            <div class="card">
+                <h2>Catégories <span class="badge">STEP 3</span></h2>
+                <div class="form-group">
+                    <label>Nom de la catégorie</label>
+                    <input type="text" id="categoryName" placeholder="Ex: Fantasy">
+                </div>
+                <div class="btn-group">
+                    <button onclick="addCategory()">Créer</button>
+                    <button class="secondary" onclick="getCategories()">Actualiser</button>
+                </div>
+                <div class="status" id="categoryStatus"></div>
+                <div class="list" id="categoriesList"></div>
+            </div>
+
+            <div class="card">
+                <h2>Livres <span class="badge">STEP 4</span></h2>
+                <div class="form-group">
+                    <label>Titre du livre</label>
+                    <input type="text" id="bookTitle" placeholder="Ex: Harry Potter à l'école des sorciers">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="bookDescription" placeholder="Ex: Premier tome de la série Harry Potter"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Auteur</label>
+                    <select id="bookAuthorId">
+                        <option value="">-- Sélectionner un auteur --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Catégorie</label>
+                    <select id="bookCategoryId">
+                        <option value="">-- Sélectionner une catégorie --</option>
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <button onclick="addBook()">Créer</button>
+                    <button class="secondary" onclick="getBooks()">Actualiser</button>
+                </div>
+                <div class="status" id="bookStatus"></div>
+                <div class="list" id="booksList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3001/api/v1';
+        let token = '';
+
+        function showStatus(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `status show ${isError ? 'error' : 'success'}`;
+            setTimeout(() => element.classList.remove('show'), 5000);
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.accessToken) {
+                    token = data.accessToken;
+                    const tokenDisplay = document.getElementById('tokenDisplay');
+                    tokenDisplay.innerHTML = `<strong>Token actif:</strong> ${token.substring(0, 60)}...`;
+                    tokenDisplay.classList.add('show');
+                    showStatus('loginStatus', 'Connexion réussie !');
+                    await getAuthors();
+                    await getCategories();
+                    await getBooks();
+                } else {
+                    showStatus('loginStatus', data.error || 'Erreur de connexion', true);
+                }
+            } catch (error) {
+                showStatus('loginStatus', 'Erreur réseau: ' + error.message, true);
+            }
+        }
+
+        async function addAuthor() {
+            if (!token) {
+                showStatus('authorStatus', 'Connectez-vous d\'abord !', true);
+                return;
+            }
+
+            const name = document.getElementById('authorName').value;
+            const biography = document.getElementById('authorBio').value;
+
+            if (!name) {
+                showStatus('authorStatus', 'Le nom est requis', true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/authors`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name, biography })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showStatus('authorStatus', `Auteur "${name}" créé avec succès !`);
+                    document.getElementById('authorName').value = '';
+                    document.getElementById('authorBio').value = '';
+                    await getAuthors();
+                } else {
+                    showStatus('authorStatus', data.error || 'Erreur création', true);
+                }
+            } catch (error) {
+                showStatus('authorStatus', 'Erreur réseau: ' + error.message, true);
+            }
+        }
+
+        async function getAuthors() {
+            try {
+                const response = await fetch(`${API_URL}/authors`);
+                const data = await response.json();
+
+                if (response.ok && Array.isArray(data)) {
+                    const authorsList = document.getElementById('authorsList');
+                    authorsList.innerHTML = data.length ? data.map(author => `
+                        <div class="list-item">
+                            <strong>#${author.id} - ${author.name}</strong><br>
+                            <small>${author.biography || 'Pas de biographie'}</small>
+                        </div>
+                    `).join('') : '<div class="list-item">Aucun auteur</div>';
+
+                    const select = document.getElementById('bookAuthorId');
+                    select.innerHTML = '<option value="">-- Sélectionner un auteur --</option>' +
+                        data.map(author => `<option value="${author.id}">${author.name}</option>`).join('');
+                }
+            } catch (error) {
+                console.error('Erreur getAuthors:', error);
+            }
+        }
+
+        async function addCategory() {
+            if (!token) {
+                showStatus('categoryStatus', 'Connectez-vous d\'abord !', true);
+                return;
+            }
+
+            const name = document.getElementById('categoryName').value;
+
+            if (!name) {
+                showStatus('categoryStatus', 'Le nom est requis', true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/categories`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showStatus('categoryStatus', `Catégorie "${name}" créée avec succès !`);
+                    document.getElementById('categoryName').value = '';
+                    await getCategories();
+                } else {
+                    showStatus('categoryStatus', data.error || 'Erreur création', true);
+                }
+            } catch (error) {
+                showStatus('categoryStatus', 'Erreur réseau: ' + error.message, true);
+            }
+        }
+
+        async function getCategories() {
+            try {
+                const response = await fetch(`${API_URL}/categories`);
+                const data = await response.json();
+
+                if (response.ok && Array.isArray(data)) {
+                    const categoriesList = document.getElementById('categoriesList');
+                    categoriesList.innerHTML = data.length ? data.map(cat => `
+                        <div class="list-item">
+                            <strong>#${cat.id} - ${cat.name}</strong>
+                        </div>
+                    `).join('') : '<div class="list-item">Aucune catégorie</div>';
+
+                    const select = document.getElementById('bookCategoryId');
+                    select.innerHTML = '<option value="">-- Sélectionner une catégorie --</option>' +
+                        data.map(cat => `<option value="${cat.id}">${cat.name}</option>`).join('');
+                }
+            } catch (error) {
+                console.error('Erreur getCategories:', error);
+            }
+        }
+
+        async function addBook() {
+            if (!token) {
+                showStatus('bookStatus', 'Connectez-vous d\'abord !', true);
+                return;
+            }
+
+            const title = document.getElementById('bookTitle').value;
+            const description = document.getElementById('bookDescription').value;
+            const authorId = parseInt(document.getElementById('bookAuthorId').value);
+            const categoryId = parseInt(document.getElementById('bookCategoryId').value);
+
+            if (!title || !authorId || !categoryId) {
+                showStatus('bookStatus', 'Tous les champs sont requis', true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/books`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ title, description, authorId, categoryId })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showStatus('bookStatus', `Livre "${title}" créé avec succès !`);
+                    document.getElementById('bookTitle').value = '';
+                    document.getElementById('bookDescription').value = '';
+                    await getBooks();
+                } else {
+                    showStatus('bookStatus', data.error || 'Erreur création', true);
+                }
+            } catch (error) {
+                showStatus('bookStatus', 'Erreur réseau: ' + error.message, true);
+            }
+        }
+
+        async function getBooks() {
+            try {
+                const response = await fetch(`${API_URL}/books`);
+                const data = await response.json();
+
+                if (response.ok && Array.isArray(data)) {
+                    const booksList = document.getElementById('booksList');
+                    booksList.innerHTML = data.length ? data.map(book => `
+                        <div class="list-item">
+                            <strong>${book.title}</strong><br>
+                            <small>${book.description || 'Pas de description'}</small><br>
+                            <small>Auteur: ${book.author?.name || 'N/A'} | Catégorie: ${book.category?.name || 'N/A'}</small>
+                        </div>
+                    `).join('') : '<div class="list-item">Aucun livre</div>';
+                }
+            } catch (error) {
+                console.error('Erreur getBooks:', error);
+            }
+        }
+
+        window.onload = () => {
+            getAuthors();
+            getCategories();
+            getBooks();
+        };
+    </script>
+</body>
+</html>
