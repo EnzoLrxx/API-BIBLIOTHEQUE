@@ -158,6 +158,15 @@ La documentation Swagger est accessible à : `http://localhost:3001/api-docs`
 
 Une interface de test simple est disponible à : `http://localhost:3001`
 
+## Intégration IA (Groq Cloud)
+
+L'API intègre Groq Cloud pour enrichir les fonctionnalités avec de l'intelligence artificielle :
+
+- **Génération automatique de descriptions** : Si aucune description n'est fournie lors de la création d'un livre, l'IA en génère une automatiquement
+- **Résumés de livres** : `GET /api/v1/books/:id/summarize` génère un résumé captivant du livre
+- **Recommandations** : `GET /api/v1/books/:id/recommend` suggère 3 livres similaires
+- **Affichage automatique** : Les recommandations sont incluses dans la liste des livres (`GET /api/v1/books`)
+
 ## Endpoints principaux
 
 ### Authentification
@@ -170,11 +179,13 @@ Une interface de test simple est disponible à : `http://localhost:3001`
 
 ### Livres
 
-- `GET /api/v1/books` - Liste des livres (public)
-- `GET /api/v1/books/:id` - Un livre (public)
+- `GET /api/v1/books` - Liste des livres avec recommandations IA (public)
+- `GET /api/v1/books/:id` - Un livre avec résumé et recommandations IA (public)
 - `POST /api/v1/books` - Créer un livre (ADMIN)
 - `PUT /api/v1/books/:id` - Modifier un livre (ADMIN)
 - `DELETE /api/v1/books/:id` - Supprimer un livre (ADMIN)
+- `GET /api/v1/books/:id/summarize` - Générer un résumé IA (public)
+- `GET /api/v1/books/:id/recommend` - Obtenir des recommandations IA (public)
 
 ### Auteurs
 

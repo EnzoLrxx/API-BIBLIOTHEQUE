@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const prisma = require('../config/database');
 const { authenticateToken, requireAdmin } = require('../middleware/auth');
+const { generateBookDescription, generateBookSummary, recommendSimilarBooks } = require('../services/groq');
 
 /**
  * @swagger
@@ -21,7 +22,18 @@ router.get('/', async (req, res) => {
         category: true
       }
     });
-    res.json(books);
+
+    const booksWithRecommendations = await Promise.all(
+      books.map(async (book) => {
+        const recommendations = await recommendSimilarBooks(book);
+        return {
+          ...book,
+          ai: { recommendations }
+        };
+      })
+    );
+
+    res.json(booksWithRecommendations);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -55,7 +67,19 @@ router.get('/:id', async (req, res) => {
     if (!book) {
       return res.status(404).json({ error: 'Livre non trouvé' });
     }
-    res.json(book);
+
+    const [summary, recommendations] = await Promise.all([
+      generateBookSummary(book),
+      recommendSimilarBooks(book)
+    ]);
+
+    res.json({
+      ...book,
+      ai: {
+        summary,
+        recommendations
+      }
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -100,10 +124,19 @@ router.get('/:id', async (req, res) => {
 router.post('/', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { title, description, publishedDate, authorId, categoryId, available } = req.body;
+
+    const author = await prisma.author.findUnique({ where: { id: parseInt(authorId) } });
+    const category = await prisma.category.findUnique({ where: { id: parseInt(categoryId) } });
+
+    let finalDescription = description;
+    if (!description) {
+      finalDescription = await generateBookDescription(title, author?.name, category?.name);
+    }
+
     const book = await prisma.book.create({
       data: {
         title,
-        description,
+        description: finalDescription,
         publishedDate: publishedDate ? new Date(publishedDate) : null,
         authorId: parseInt(authorId),
         categoryId: parseInt(categoryId),
@@ -114,7 +147,17 @@ router.post('/', authenticateToken, requireAdmin, async (req, res) => {
         category: true
       }
     });
-    res.status(201).json(book);
+
+    const summary = await generateBookSummary(book);
+    const recommendations = await recommendSimilarBooks(book);
+
+    res.status(201).json({
+      ...book,
+      ai: {
+        summary,
+        recommendations
+      }
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -211,6 +254,80 @@ router.delete('/:id', authenticateToken, requireAdmin, async (req, res) => {
     if (error.code === 'P2025') {
       return res.status(404).json({ error: 'Livre non trouvé' });
     }
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * @swagger
+ * /api/v1/books/{id}/summarize:
+ *   get:
+ *     tags: [Livres]
+ *     summary: Générer un résumé IA du livre
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+router.get('/:id/summarize', async (req, res) => {
+  try {
+    const book = await prisma.book.findUnique({
+      where: { id: parseInt(req.params.id) },
+      include: {
+        author: true,
+        category: true
+      }
+    });
+
+    if (!book) {
+      return res.status(404).json({ error: 'Livre non trouvé' });
+    }
+
+    const summary = await generateBookSummary(book);
+    res.json({ book: book.title, summary });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * @swagger
+ * /api/v1/books/{id}/recommend:
+ *   get:
+ *     tags: [Livres]
+ *     summary: Recommandations IA de livres similaires
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+router.get('/:id/recommend', async (req, res) => {
+  try {
+    const book = await prisma.book.findUnique({
+      where: { id: parseInt(req.params.id) },
+      include: {
+        author: true,
+        category: true
+      }
+    });
+
+    if (!book) {
+      return res.status(404).json({ error: 'Livre non trouvé' });
+    }
+
+    const recommendations = await recommendSimilarBooks(book);
+    res.json({ book: book.title, recommendations });
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });

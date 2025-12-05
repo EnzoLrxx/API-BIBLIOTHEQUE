@@ -12,7 +12,14 @@
   "prisma": {
     "seed": "node prisma/seed.js"
   },
-  "keywords": ["api", "rest", "jwt", "prisma", "postgresql", "express"],
+  "keywords": [
+    "api",
+    "rest",
+    "jwt",
+    "prisma",
+    "postgresql",
+    "express"
+  ],
   "author": "Enzo",
   "license": "ISC",
   "dependencies": {
@@ -22,6 +29,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "express-rate-limit": "^8.2.1",
+    "groq-sdk": "^0.35.0",
     "jsonwebtoken": "^9.0.2",
     "prisma": "^6.19.0",
     "swagger-jsdoc": "^6.2.8",

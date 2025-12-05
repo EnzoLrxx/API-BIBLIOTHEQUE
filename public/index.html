@@ -224,6 +224,30 @@
             font-size: 11px;
             margin-left: 8px;
         }
+
+        .recommendations {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e7f3ff;
+            border-radius: 6px;
+            border-left: 3px solid #28a745;
+        }
+
+        .recommendations strong {
+            color: #28a745;
+            font-size: 12px;
+        }
+
+        .recommendations ul {
+            margin: 5px 0 0 15px;
+            padding: 0;
+        }
+
+        .recommendations li {
+            font-size: 12px;
+            color: #333;
+            margin-bottom: 3px;
+        }
     </style>
 </head>
 <body>
@@ -529,13 +553,23 @@
 
                 if (response.ok && Array.isArray(data)) {
                     const booksList = document.getElementById('booksList');
-                    booksList.innerHTML = data.length ? data.map(book => `
-                        <div class="list-item">
-                            <strong>${book.title}</strong><br>
-                            <small>${book.description || 'Pas de description'}</small><br>
-                            <small>Auteur: ${book.author?.name || 'N/A'} | Catégorie: ${book.category?.name || 'N/A'}</small>
-                        </div>
-                    `).join('') : '<div class="list-item">Aucun livre</div>';
+                    booksList.innerHTML = data.length ? data.map(book => {
+                        const recommendations = book.ai?.recommendations || [];
+                        const recoHtml = recommendations.length
+                            ? `<div class="recommendations">
+                                <strong>Recommandations :</strong>
+                                <ul>${recommendations.map(r => `<li>${r.title} - ${r.author}</li>`).join('')}</ul>
+                               </div>`
+                            : '';
+                        return `
+                            <div class="list-item">
+                                <strong>${book.title}</strong><br>
+                                <small>${book.description || 'Pas de description'}</small><br>
+                                <small>Auteur: ${book.author?.name || 'N/A'} | Catégorie: ${book.category?.name || 'N/A'}</small>
+                                ${recoHtml}
+                            </div>
+                        `;
+                    }).join('') : '<div class="list-item">Aucun livre</div>';
                 }
             } catch (error) {
                 console.error('Erreur getBooks:', error);

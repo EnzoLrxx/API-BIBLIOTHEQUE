@@ -26,6 +26,7 @@ services:
       JWT_SECRET: "votre_secret_jwt_super_securise_ici"
       JWT_REFRESH_SECRET: "votre_secret_refresh_super_securise_ici"
       PORT: 3001
+      GROQ_API_KEY: ${GROQ_API_KEY}
     ports:
       - "3001:3001"
     depends_on:
